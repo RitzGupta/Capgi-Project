@@ -1,7 +1,9 @@
 package com.capgemini.onlineWallet.daos;
 
 import java.util.List;
+import java.util.Map;
 
+import com.capgemini.onlineWallet.model.Login;
 import com.capgemini.onlineWallet.model.WalletAccount;
 
 public interface WalletAccountDao {
@@ -15,5 +17,6 @@ public interface WalletAccountDao {
 	List<WalletAccount> allAccount();
 	
 	public List<WalletAccount> retriveAllAccount();
+	public Map<Integer,WalletAccount> allAccountDetails();
 
 }

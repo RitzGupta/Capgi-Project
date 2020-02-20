@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.capgemini.onlineWallet.daos.WalletTransactionDao;
 import com.capgemini.onlineWallet.model.WalletAccount;
@@ -15,6 +17,8 @@ import com.capgemini.onlineWallet.util.DbUtil;
 
 public class WalletTransactionDaoImpl implements WalletTransactionDao{
 
+	static Map<Integer,WalletTransactions> store = new HashMap<>();
+	
 	@Override
 	public void amountTransaction(int senderAccId, int receiverAccId, double balance) {
 		// TODO Auto-generated method stub
@@ -113,6 +117,30 @@ public class WalletTransactionDaoImpl implements WalletTransactionDao{
 			e.printStackTrace();
 		}
 		return accounts;
+	}
+	
+	@Override
+	public Map<Integer,WalletTransactions> allTransactionDetails(){
+		
+		try {
+			Connection con = DbUtil.createConnection();
+			String sql="select * from walletTransactions";
+			Statement st=con.createStatement();
+			ResultSet rs=st.executeQuery(sql);
+			while(rs.next()) {
+				WalletTransactions w=new WalletTransactions();
+				w.setDescription(rs.getString(2));
+				w.setDateOfTransaction(rs.getDate(3));
+				w.setAmount(rs.getDouble(4));
+				w.setReceiverAccId(rs.getInt(5));
+				store.put(w.getReceiverAccId(),w);
+				//System.out.println(w.getAccountBalance());
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return store;
+		
 	}
 
 	

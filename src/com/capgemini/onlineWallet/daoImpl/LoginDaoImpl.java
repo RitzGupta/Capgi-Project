@@ -5,13 +5,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import com.capgemini.onlineWallet.daos.LoginDao;
 import com.capgemini.onlineWallet.model.Login;
+import com.capgemini.onlineWallet.model.WalletAccount;
 import com.capgemini.onlineWallet.util.DbUtil;
 
 
 public class LoginDaoImpl implements LoginDao {
+	static Map<Integer,Login> store = new HashMap<>();
+	
 	Connection con=null;
 	public LoginDaoImpl() {
 		con=DbUtil.createConnection();
@@ -71,6 +77,33 @@ public class LoginDaoImpl implements LoginDao {
 		return uid;
 	}
 
+	@Override
+	public Map<Integer,Login> allUser(){
+		
+		try {
+			Connection con = DbUtil.createConnection();
+			String sql="select * from walletUser";
+			Statement st=con.createStatement();
+			ResultSet rs=st.executeQuery(sql);
+			while(rs.next()) {
+				Login l=new Login();
+				l.setUserId(rs.getInt(1));
+				l.setUserName(rs.getString(2));
+				l.setPassword(rs.getString(3));
+				l.setPhoneNumber(rs.getString(4));
+				l.setUserName(rs.getString(5));
+				store.put(l.getUserId(), l);
+				//System.out.println(l.getUserId());
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return store;
+		
+		
+		
+	}
+	
 	@Override
 	public int changePassword(String oldPassword, String newPassword, String email) {
 		// TODO Auto-generated method stub

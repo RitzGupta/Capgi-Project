@@ -6,14 +6,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.capgemini.onlineWallet.daos.WalletAccountDao;
+import com.capgemini.onlineWallet.model.Login;
 import com.capgemini.onlineWallet.model.WalletAccount;
 import com.capgemini.onlineWallet.util.DbUtil;
 
 public class WalletAccountDaoImp implements WalletAccountDao{
-
+	static Map<Integer,WalletAccount> store = new HashMap<>();
 	@Override
 	public void createWalletAccount(WalletAccount w) {
 		// TODO Auto-generated method stub
@@ -108,6 +111,7 @@ public class WalletAccountDaoImp implements WalletAccountDao{
 	@Override
 	public List<WalletAccount> retriveAllAccount() {
 		List<WalletAccount> accounts=new ArrayList<>();
+		
 		try {
 			Connection con = DbUtil.createConnection();
 			String sql="select * from walletAccount";
@@ -125,6 +129,31 @@ public class WalletAccountDaoImp implements WalletAccountDao{
 		}
 		return accounts;
 	}
-
+	
+	@Override
+	public Map<Integer,WalletAccount> allAccountDetails(){
+		
+		try {
+			Connection con = DbUtil.createConnection();
+			String sql="select * from walletAccount";
+			Statement st=con.createStatement();
+			ResultSet rs=st.executeQuery(sql);
+			while(rs.next()) {
+				WalletAccount w=new WalletAccount();
+				w.setAccountId(rs.getInt(1));
+				w.setUserId(rs.getInt(2));
+				w.setAccountBalance(rs.getDouble(3));
+				store.put(w.getUserId(),w);
+				//System.out.println(l.getUserId());
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return store;
+		
+		
+		
+	}
+	
 
 }
